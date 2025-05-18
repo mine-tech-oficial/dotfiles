@@ -65,15 +65,18 @@
           :orientation "vertical"
           :space-evenly false
           (button
-            :onclick 'reboot'
-            "󰜉")
-          (button
             :onclick 'killall Hyprland'
+            :class 'logout-btn'
             "󰍃")
+          (button
+            :onclick 'reboot'
+            :class 'reboot-btn'
+            "󰜉")
         )
       )
       (button
-        :onclick 'shutdown 0'
+        :onclick 'shutdown now'
+        :class 'power-btn'
         "󰐥")
     )))
 
@@ -98,6 +101,7 @@
     :orientation "vertical"
     :valign "start"
     :vexpand false
+    :class "tray"
   ))
 
 (defwidget middle []
