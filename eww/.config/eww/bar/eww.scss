@@ -1,0 +1,70 @@
+$background: #232136;
+$foreground: #e0def4;
+$surface: #2a273f;
+$blue: #9ccfd8;
+
+* {
+  all: unset;
+}
+
+.bar {
+  font-family: "Maple Mono NF";
+  color: $foreground;
+  background-color: $background;
+  padding: 5px;
+  border-radius: 0px 15px 15px 0px;
+  border-style: solid;
+  border-color: $blue;
+  border-width: 2px;
+}
+
+scale trough {
+  background-color: $background;
+  border-radius: 5px;
+  min-height: 80px;
+  min-width: 10px;
+  margin: 0.3rem 0 0.3rem 0;
+}
+
+menu {
+  background-color: $surface;
+  border-radius: 5px;
+  border-style: solid;
+  border-color: $blue;
+  border-width: 2px;
+  padding: 3px;
+}
+
+.volbar trough highlight {
+  background-color: $blue;
+  border-radius: 5px;
+}
+
+.dot {
+  border-radius: 100%;
+  background-color: $foreground;
+  color: $surface;
+  font-size: 0.8em;
+  padding: 7px;
+  margin: 2px;
+  min-width: 0.8em;
+}
+
+.active {
+  background-color: $blue;
+}
+
+.power,
+.volume {
+  font-size: 1.4em;
+}
+
+.workspace,
+.power,
+.volume,
+.time {
+  padding: 5px;
+  background-color: $surface;
+  font-weight: bold;
+  border-radius: 10px;
+}

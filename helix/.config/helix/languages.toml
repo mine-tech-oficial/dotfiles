@@ -1,0 +1,17 @@
+[language-server]
+yuckls = {command = "yuckls"}
+
+[[language]]
+name = "yuck"
+scope = "source.yuck"
+injection-regex = "yuck"
+file-types = ["yuck"]
+language-servers = ["yuckls"]
+
+[[language]]
+name = "css"
+formatter = { command = "prettier", args = ["--parser", "css"]}
+
+[[language]]
+name = "scss"
+formatter = { command = "prettier", args = ["--parser", "scss"]}

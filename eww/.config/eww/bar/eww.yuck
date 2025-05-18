@@ -1,0 +1,146 @@
+(defpoll hour :interval "1s"
+              :initial "0"
+  `date +%H`)
+(defpoll minute :interval "1s"
+                :initial "0"
+  `date +%M`)
+
+(defvar power false)
+
+(defpoll current-volume :interval "1s"
+                        :initial "0"
+  `awk -F"[[%]" '/Mono:/ { print $2 }' <(amixer -c Gamin get PCM)`)
+(defpoll volume-on
+  :interval "1s"
+  :initial "on"
+  `awk -F"[][]" '/Mono:/ {print $6}' <(amixer -c Gamin get PCM)`)
+(defvar volume false)
+
+(defvar workspace "1")
+(defvar workspaces "[1]")
+
+(defwidget volume []
+  (eventbox
+    :onhover "${EWW_CMD} update volume=true"
+    :onhoverlost "${EWW_CMD} update volume=false"
+    (box
+      :orientation "vertical"
+      :spacing 2
+      :space-evenly false
+      :class "volume"
+      (revealer
+        :transition "slideup"
+        :reveal volume
+        (scale
+          :class "volbar"
+          :value current-volume
+          :min 0
+          :max 101
+          :orientation "vertical"
+          :flipped true
+  			  :tooltip "Volume: ${current-volume}%"
+          :onchange 'amixer -c Gamin set PCM {}% && ${EWW_CMD} poll current-volume')
+      )
+      (button :onclick `amixer -c 0 Gamin PCM toggle && ${EWW_CMD} poll volume-on`
+        {volume-on == "off" ? "󰝟" :
+          current-volume == 0 ? "󰕿" : 
+            current-volume <=50 ? "󰖀" : "󰕾"
+        })
+    )))
+
+(defwidget powermenu []
+  (eventbox
+    :onhover "${EWW_CMD} update power=true"
+    :onhoverlost "${EWW_CMD} update power=false"
+    (box
+      :orientation "vertical"
+      :valign "end"
+      :space-evenly false
+      :vexpand false
+      :class "power"
+      (revealer
+        :transition "slideup"
+        :reveal power
+        (box
+          :orientation "vertical"
+          :space-evenly false
+          (button
+            :onclick 'reboot'
+            "󰜉")
+          (button
+            :onclick 'killall Hyprland'
+            "󰍃")
+        )
+      )
+      (button
+        :onclick 'shutdown 0'
+        "󰐥")
+    )))
+
+(defwidget dot [id]
+  (eventbox
+    :onclick `hyprctl dispatch workspace ${id}`
+    (box
+      :class {id == workspace ? "dot active" : "dot"}
+      id
+    )))
+
+(defwidget time []
+  (box
+    :orientation "vertical"
+    :valign "end"
+    :class "time"
+    hour
+    minute))
+
+(defwidget start []
+  (systray
+    :orientation "vertical"
+    :valign "start"
+    :vexpand false
+  ))
+
+(defwidget middle []
+  (box
+    :orientation "vertical"
+    :class "workspace"
+    :valign "center"
+    :halign "center"
+    :hexpand false
+    (for id in workspaces
+      (dot :id id))
+  ))
+
+(defwidget end []
+  (box
+    :orientation "vertical"
+    :space-evenly false
+    :spacing 10
+    :valign "end"
+    (volume)
+    (powermenu)
+    (time)
+  ))
+
+(defwidget bar_layout []
+  (centerbox
+    :orientation "vertical"
+    :class "bar"
+    (start)
+    (middle)
+    (end)
+  ))
+
+(defwindow bar
+  :monitor 0
+  :stacking "fg"
+  :exclusive true
+  :focusable false
+  :geometry (geometry
+              :x "0%"
+              :y "0%"
+              :width "3%"
+              :height "100%"
+              :anchor "center left"
+              )
+  (bar_layout))
