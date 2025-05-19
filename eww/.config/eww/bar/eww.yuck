@@ -115,7 +115,6 @@
     :valign "center"
     :halign "center"
     :hexpand false
-    workspace
     (for id in workspaces
       (dot :id id))
   ))
