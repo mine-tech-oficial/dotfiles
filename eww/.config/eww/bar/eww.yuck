@@ -16,8 +16,12 @@
   `awk -F"[][]" '/Mono:/ {print $6}' <(amixer -c Gamin get PCM)`)
 (defvar volume false)
 
-(defvar workspace "1")
-(defvar workspaces "[1]")
+(deflisten workspace
+  :initial "1"
+  `./workspace active`)
+(deflisten workspaces
+  :initial "[1]"
+  `./workspace list`)
 
 (defwidget volume []
   (eventbox
@@ -111,6 +115,7 @@
     :valign "center"
     :halign "center"
     :hexpand false
+    workspace
     (for id in workspaces
       (dot :id id))
   ))

@@ -3,18 +3,18 @@
 function handle {
   command=${1%>>*}
   data=${1#*>>}
-  if [[ $command == "workspace" ]]; then
+  mode=$2
+  if [[ $command == "workspace" && $mode == "active" ]]; then
     echo $data
-    eww -c $HOME/.config/eww/bar update workspace=$data
   fi
-  if [[ $command == "createworkspace" ]]; then
-    workspaces=$(eww -c $HOME/.config/eww/bar get workspaces | jq -c --argjson v $data '[.[], $v] | sort_by(-.)')
-    eww -c $HOME/.config/eww/bar update workspaces=$workspaces
+  if [[ $command == "createworkspace" && $mode == "list" ]]; then
+    workspaces=$(eww -c . get workspaces | jq -c --argjson v $data '[.[], $v] | sort_by(-.)')
+    echo $workspaces
   fi
-  if [[ $command == "destroyworkspace" ]]; then
-    workspaces=$(eww -c $HOME/.config/eww/bar get workspaces | jq -c --argjson v $data '. | map(select(. != $v))')
-    eww -c $HOME/.config/eww/bar update workspaces=$workspaces
+  if [[ $command == "destroyworkspace" && $mode == "list" ]]; then
+    workspaces=$(eww -c . get workspaces | jq -c --argjson v $data '. | map(select(. != $v))')
+    echo $workspaces
   fi
 }
 
-socat - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do handle "$line"; done
+socat -u "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" - | while read -r line; do handle "$line" $1; done
